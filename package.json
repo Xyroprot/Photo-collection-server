@@ -2,15 +2,19 @@
   "name": "sprint_12",
   "version": "0.0.1",
   "description": "photo_collection_server",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon index.js"
   },
   "author": "Vladimir Dyakonov",
   "license": "ISC",
   "devDependencies": {
     "eslint": "^7.2.0",
     "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-plugin-import": "^2.21.2"
+    "eslint-plugin-import": "^2.21.2",
+    "nodemon": "^2.0.4"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
   }
 }
