@@ -1,0 +1,5 @@
+.popup__lightbox {
+    position: relative;
+    border-radius: 3px;
+    display: flex;
+}

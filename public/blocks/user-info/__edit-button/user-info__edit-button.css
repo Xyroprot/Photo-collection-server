@@ -1,0 +1,47 @@
+@keyframes edit {
+    0%, 70% {
+        background-image: linear-gradient(to bottom, #C2E3E3, #0078FF);
+        border: 1px solid #0078FF;
+        color: #000;
+        outline: none;
+    }
+    90% {
+        background-color: white;
+        color: #000;
+        outline-color: greenyellow;
+    }
+    100% {
+        background-color: transparent;
+        border: 1px solid white;
+        color: white;
+        outline-color: greenyellow;
+    }
+}
+
+.button.user-info__edit-button {
+    background-color: transparent;
+    border: 1px solid white;
+    color: white;
+    margin: 20px 0px 0px;
+    width: 38px;
+    height: 18px;
+    font-size: 12px;
+    line-height: 15px;
+    cursor: pointer;
+}
+
+.button.user-info__edit-button:hover {
+    background-color: white;
+    color: #000;
+    transition: 0.4s ease;
+}
+
+.button.user-info__edit-button:focus {
+    animation: edit 0.4s ease-in-out 0s forwards running;
+}
+
+@media screen and (max-width: 980px) {
+    .button.user-info__edit-button {
+        align-self: center;
+    }
+}

@@ -1,0 +1,19 @@
+@import url(./_profile/popup__button_profile.css);
+
+.popup__button {
+  width: 100%;
+  height: 50px;
+  border: 1px solid rgba(0, 0, 0, .2);
+  margin-top: 48px;
+  
+  font-size: 36px;
+}
+
+.popup__button:disabled {
+  color: rgba(0, 0, 0, .2);
+}
+
+.popup__button:enabled {
+  background-color: rgb(0, 0, 0);
+  color: #fff;
+}
