@@ -1,9 +1,9 @@
-const router = require('express').Router();
-
+const cards = require('express').Router();
 const path = require('path');
 
-router.get('/cards', (req, res) => {
-  res.sendFile(path.resolve('data', 'cards.json'));
+const filePath = path.resolve('data', 'cards.json');
+cards.get('/cards', (req, res) => {
+  res.sendFile(filePath);
 });
 
-module.exports = router;
+module.exports = cards;

@@ -6,13 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Mesto</title>
-  <link rel="stylesheet" href="./pages/index.css">
+  <link rel="stylesheet" href="style.50d50cfe3e9343ba556a.css">
 </head>
 
 <body>
   <div class="root">
     <header class="header root__section">
-      <img src="./images/logo.svg" alt="mesto logo" class="logo">
+      <img src="src/images/logo.svg" alt="mesto logo" class="logo">
     </header>
     <div class="profile root__section">
       <div class="user-info">
@@ -31,7 +31,7 @@
     </div>
     <div class="popup popup_card">
       <div class="popup__content">
-        <img src="./images/close.svg" alt="" class="popup__close">
+        <img src="src/images/close.svg" alt="" class="popup__close">
         <h3 class="popup__title">Новое место</h3>
         <form class="popup__form" name="new">
           <input type="text" minlength="2" maxlength="30" name="name" class="popup__input popup__input_type_name" placeholder="Название" required>
@@ -45,7 +45,7 @@
     </div>
     <div class="popup popup_profile">
       <div class="popup__content">
-        <img src="./images/close.svg" alt="" class="popup__close">
+        <img src="src/images/close.svg" alt="" class="popup__close">
         <h3 class="popup__title">Редактировать профиль</h3>
         <form class="popup__form" name="profile">
           <input type="text" minlength="2" maxlength="30" name="person" class="popup__input popup__input_type_name" placeholder="Имя" required>
@@ -59,11 +59,12 @@
     <div class="popup popup_image">
       <div class="popup__lightbox">
           <img src="https://images.unsplash.com/photo-1567428289786-cddc036eadfb?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1534&q=80" alt="" class="popup__picture">
-          <img src="./images/close.svg" alt="" class="popup__close">
+          <img src="src/images/close.svg" alt="" class="popup__close">
         </div>
       </div> 
     </div>
   </div>
+  <!--
   <script src="js/Api.js"></script>
   <script src="js/Card.js"></script>
   <script src="js/CardList.js"></script>
@@ -71,7 +72,12 @@
   <script src="js/PopupLightBox.js"></script>
   <script src="js/UserInfo.js"></script>
   <script src="js/FormValidator.js"></script>
-  <script src="js/Script.js"></script>
+  -->
+  <script type="module" src="main.3229bddb00ac7baa3786.js"></script>
+  <!--
+    <script type="nomodule" src="main.3229bddb00ac7baa3786.js"></script>
+  -->
+  
 </body>
 
 </html>
