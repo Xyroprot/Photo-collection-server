@@ -22,9 +22,9 @@ const sendUserById = (async (req, res, next) => {
       // eslint-disable-next-line no-underscore-dangle
       const userData = usersData.find((item) => item._id === req.params.id);
       if (userData) {
-        res.send(userData);
+        return res.send(userData);
       }
-      res.status(404).send({ message: 'Нет пользователя с таким id' });
+      return res.status(404).send({ message: 'Нет пользователя с таким id' });
     })
     .catch(() => next(new Error('Произошла ошибка при чтении данных')));
 });
