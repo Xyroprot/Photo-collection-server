@@ -1,25 +1,19 @@
 const cards = require('express').Router();
-const asyncHandler = require('express-async-handler');
 const fs = require('fs');
 const path = require('path');
 
 const filePath = path.resolve('data', 'cards.json');
 
-const sendCards = (async (req, res, next) => {
+const sendCards = (async (req, res) => {
   try {
     const fileReader = await fs.createReadStream(filePath, { encoding: 'utf8' });
-    return fileReader.pipe(res);
+    return fileReader.pipe(res.type('json'));
   } catch (error) {
-    // отправляет ошибку в обработчик
-    return next(error);
+    console.log(error);
+    return res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
   }
 });
 
-const cardsServerError = (asyncHandler(async () => {
-  throw new Error('Все сломалось... опять!');
-}));
-
 cards.get('/cards', sendCards);
-cards.get('/cards', cardsServerError);
 
 module.exports = cards;

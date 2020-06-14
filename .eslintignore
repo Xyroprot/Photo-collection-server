@@ -1,0 +1,6 @@
+# directories
+public/*
+data/*
+
+# every minified javascript files
+*.min.js

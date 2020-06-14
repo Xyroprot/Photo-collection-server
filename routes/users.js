@@ -1,47 +1,35 @@
 const users = require('express').Router();
-const asyncHandler = require('express-async-handler');
 const fs = require('fs');
 const fsPromises = require('fs').promises;
 const path = require('path');
 
 const filePath = path.resolve('data', 'users.json');
-// const fileReader = fs.createReadStream(filePath, { encoding: 'utf8' });
 
-const sendUsers = (async (req, res, next) => {
+const sendUsers = (async (req, res) => {
   try {
     const fileReader = await fs.createReadStream(filePath, { encoding: 'utf8' });
-    return fileReader.pipe(res);
+    return fileReader.pipe(res.type('json'));
   } catch (error) {
-    // отправляет ошибку в обработчик
-    return next(error);
+    console.log(error);
+    return res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
   }
 });
-
-const usersServerError = (asyncHandler(async () => {
-  throw new Error('Все сломалось... опять!');
-}));
 
 const sendUserById = (async (req, res, next) => {
   fsPromises.readFile(filePath, { encoding: 'utf8' })
     .then((data) => {
+      const usersData = JSON.parse(data);
       // eslint-disable-next-line no-underscore-dangle
-      const index = JSON.parse(data).findIndex((item) => item._id === req.params.id);
-      if (index === -1) {
-        res.status(404).send({ message: 'Нет пользователя с таким id' });
+      const userData = usersData.find((item) => item._id === req.params.id);
+      if (userData) {
+        res.send(userData);
       }
-      res.send(JSON.parse(data)[index]);
+      res.status(404).send({ message: 'Нет пользователя с таким id' });
     })
-    .catch(() => next(new Error('Все сломалось... опять!')));
+    .catch(() => next(new Error('Произошла ошибка при чтении данных')));
 });
 
 users.get('/users', sendUsers);
-users.get('/users', usersServerError);
 users.get('/users/:id', sendUserById);
-
-/*
-users.get('/users', (req, res) => {
-  res.sendFile(filePath);
-});
-*/
 
 module.exports = users;
