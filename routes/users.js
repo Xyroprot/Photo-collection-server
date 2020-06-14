@@ -2,13 +2,18 @@ const users = require('express').Router();
 const fs = require('fs');
 const fsPromises = require('fs').promises;
 const path = require('path');
+const { json } = require('express');
 
 const filePath = path.resolve('data', 'users.json');
 
 const sendUsers = (async (req, res) => {
   try {
     const fileReader = await fs.createReadStream(filePath, { encoding: 'utf8' });
-    return fileReader.pipe(res.type('json'));
+    fileReader.pipe(res.type('json'));
+    return fileReader.on('error', (error) => {
+      console.log(error);
+      return res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
