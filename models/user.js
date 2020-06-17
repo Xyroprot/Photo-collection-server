@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
   },
   avatar: { // ссылка на аватарку
     type: String,
-    validate: [validator.isURL, 'Здесь должна быть ссылка в формате: http://mysite.ru'],
+    validate: validator.isURL,
     required: true,
   },
 });
