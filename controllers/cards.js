@@ -2,7 +2,12 @@ const Card = require('../models/card');
 
 const getCards = (req, res) => {
   Card.find({})
-    .then((cards) => res.send({ data: cards }))
+    .then((cards) => {
+      if (!cards) {
+        return res.status(404).send({ message: 'Ресурс не найден' });
+      }
+      return res.send({ data: cards });
+    })
     .catch(() => res.status(500).send({ message: 'Произошла ошибка при чтении данных' }));
 };
 
@@ -35,7 +40,12 @@ const likeCard = (req, res) => {
       upsert: false,
     },
   )
-    .then((cardLike) => res.send({ data: cardLike }))
+    .then((card) => {
+      if (!card) {
+        return res.status(404).send({ message: 'Нет пользователя с таким id' });
+      }
+      return res.send({ data: card });
+    })
     .catch(() => res.status(500).send({ message: 'Произошла ошибка при чтении данных' }));
 };
 
@@ -49,7 +59,12 @@ const dislikeCard = (req, res) => {
       upsert: false,
     },
   )
-    .then((cardLike) => res.send({ data: cardLike }))
+    .then((card) => {
+      if (!card) {
+        return res.status(404).send({ message: 'Нет пользователя с таким id' });
+      }
+      return res.send({ data: card });
+    })
     .catch(() => res.status(500).send({ message: 'Произошла ошибка при чтении данных' }));
 };
 

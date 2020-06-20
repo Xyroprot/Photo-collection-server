@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 
-const usersArr = [];
-
 const cardSchema = new mongoose.Schema({
   name: { // ссылка на аватарку
     type: String,
@@ -21,7 +19,7 @@ const cardSchema = new mongoose.Schema({
     required: true,
   },
   likes: { // список лайкнувших пост пользователей
-    type: usersArr.push(mongoose.Schema.Types.ObjectId),
+    type: [mongoose.Schema.Types.ObjectId],
     ref: 'user',
     default: [],
   },

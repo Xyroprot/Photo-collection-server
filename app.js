@@ -1,11 +1,13 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+// const bcrypt = require('bcryptjs'); // bcrypt
+// const jwt = require('jsonwebtoken'); // jsonwebtoken
 
 const cards = require('./routes/cards');
 const users = require('./routes/users');
 
-const { PORT } = process.env;
+const { PORT = 3000 } = process.env;
 const app = express();
 
 app.use(bodyParser.json());
