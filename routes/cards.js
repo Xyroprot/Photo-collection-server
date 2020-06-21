@@ -1,23 +1,17 @@
 const cards = require('express').Router();
-const fs = require('fs');
-const path = require('path');
 
-const filePath = path.resolve('data', 'cards.json');
+const {
+  getCards,
+  createCard,
+  deleteCard,
+  likeCard,
+  dislikeCard,
+} = require('../controllers/cards');
 
-const sendCards = (async (req, res) => {
-  try {
-    const fileReader = await fs.createReadStream(filePath, { encoding: 'utf8' });
-    fileReader.pipe(res.type('json'));
-    return fileReader.on('error', (error) => {
-      console.log(error);
-      return res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
-  }
-});
-
-cards.get('/cards', sendCards);
+cards.get('/cards', getCards); // возвращает все карточки
+cards.post('/cards', createCard); // создаёт карточку
+cards.delete('/cards/:cardId', deleteCard); // удаляет карточку по идентификатору
+cards.put('/cards/:cardId/likes', likeCard); // поставить лайк карточке
+cards.delete('/cards/:cardId/likes', dislikeCard); // убрать лайк с карточки
 
 module.exports = cards;
