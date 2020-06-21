@@ -23,7 +23,7 @@ const deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {
-        return res.status(404).send({ message: 'Нет пользователя с таким id' });
+        return res.status(404).send({ message: 'Нет карточки с таким id' });
       }
       return res.send({ data: card });
     })
@@ -42,7 +42,7 @@ const likeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        return res.status(404).send({ message: 'Нет пользователя с таким id' });
+        return res.status(404).send({ message: 'Нет карточки с таким id' });
       }
       return res.send({ data: card });
     })
@@ -61,7 +61,7 @@ const dislikeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        return res.status(404).send({ message: 'Нет пользователя с таким id' });
+        return res.status(404).send({ message: 'Нет карточки с таким id' });
       }
       return res.send({ data: card });
     })

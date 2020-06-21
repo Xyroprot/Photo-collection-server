@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 // const bcrypt = require('bcryptjs'); // bcrypt
 // const jwt = require('jsonwebtoken'); // jsonwebtoken
+// const cookieParser = require('cookie-parser'); // cookieParser
 
 const cards = require('./routes/cards');
 const users = require('./routes/users');
@@ -32,5 +33,6 @@ app.use('*', (req, res) => {
 });
 
 app.listen(PORT, () => {
+  // eslint-disable-next-line no-console
   console.log(`App listening on port ${PORT}`);
 });
