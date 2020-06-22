@@ -1,7 +1,10 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 const User = require('../models/user');
+
+const secretWord = crypto.randomBytes(32).toString('hex'); // секретный ключ для проверки токена
 
 const getUsers = (req, res) => {
   User.find({})
@@ -42,7 +45,7 @@ const login = (req, res) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        'en!gma',
+        secretWord,
         { expiresIn: '7d' },
       );
       res
@@ -85,6 +88,7 @@ const updateAvatar = (req, res) => {
 };
 
 module.exports = {
+  secretWord,
   getUsers,
   getUserById,
   login,

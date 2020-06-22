@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const secretWord = require('../controllers/users');
 
 const auth = (req, res, next) => {
   const { token } = req.cookies.jwt;
@@ -10,7 +11,7 @@ const auth = (req, res, next) => {
   let payload;
 
   try {
-    payload = jwt.verify(token, 'en!gma');
+    payload = jwt.verify(token, secretWord);
   } catch {
     return res.status(401).send({ message: 'Необходима авторизация' });
   }
