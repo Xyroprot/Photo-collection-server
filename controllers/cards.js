@@ -16,21 +16,34 @@ const createCard = (req, res) => {
 
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send({ data: card }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка при чтении данных' }));
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
+      }
+    });
 };
 
 const deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
         return res.status(404).send({ message: 'Нет карточки с таким id' });
       }
-      if (card.owner !== req.user._id) {
+      if (card.owner.toString() !== req.user._id) {
         return res.status(403).send({ message: 'Это не ваша карточка' });
       }
-      return res.send({ data: card });
+      res.send({ data: card });
+      return card.remove();
     })
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка при чтении данных' }));
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
+      }
+    });
 };
 
 const likeCard = (req, res) => {
@@ -49,7 +62,13 @@ const likeCard = (req, res) => {
       }
       return res.send({ data: card });
     })
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка при чтении данных' }));
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
+      }
+    });
 };
 
 const dislikeCard = (req, res) => {
@@ -68,7 +87,13 @@ const dislikeCard = (req, res) => {
       }
       return res.send({ data: card });
     })
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка при чтении данных' }));
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
+      }
+    });
 };
 
 module.exports = {

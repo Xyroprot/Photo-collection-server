@@ -20,7 +20,13 @@ const getUserById = (req, res) => {
       }
       return res.send({ data: user });
     })
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка при чтении данных' }));
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
+      }
+    });
 };
 
 const createUser = (req, res) => {
@@ -33,9 +39,16 @@ const createUser = (req, res) => {
       name, about, avatar, email, password: hash,
     }))
     .then((user) => {
-      res.status(201).send({ data: user });
+      res.status(201).send({ _id: user._id, email: user.email });
     })
-    .catch(() => res.status(400).send({ message: 'Запрос некорректно сформулирован' }));
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
+      }
+      if (error.name === 'MongoError' && error.code === 11000) {
+        res.status(409).send({ message: 'Указанный email уже используется' });
+      }
+    });
 };
 
 const login = (req, res) => {
@@ -68,7 +81,13 @@ const updateProfile = (req, res) => {
     },
   )
     .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка при чтении данных' }));
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
+      }
+    });
 };
 
 const updateAvatar = (req, res) => {
@@ -84,7 +103,13 @@ const updateAvatar = (req, res) => {
     },
   )
     .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка при чтении данных' }));
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
+      }
+    });
 };
 
 module.exports = {
