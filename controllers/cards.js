@@ -25,6 +25,9 @@ const deleteCard = (req, res) => {
       if (!card) {
         return res.status(404).send({ message: 'Нет карточки с таким id' });
       }
+      if (card.owner !== req.user._id) {
+        return res.status(403).send({ message: 'Это не ваша карточка' });
+      }
       return res.send({ data: card });
     })
     .catch(() => res.status(500).send({ message: 'Произошла ошибка при чтении данных' }));

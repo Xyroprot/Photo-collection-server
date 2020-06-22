@@ -30,10 +30,7 @@ const createUser = (req, res) => {
       name, about, avatar, email, password: hash,
     }))
     .then((user) => {
-      res.status(201).send({
-        _id: user._id,
-        email: user.email,
-      });
+      res.status(201).send({ data: user });
     })
     .catch(() => res.status(400).send({ message: 'Запрос некорректно сформулирован' }));
 };
