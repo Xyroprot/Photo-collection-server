@@ -1,11 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-// const jwt = require('jsonwebtoken'); // jsonwebtoken
-// const cookieParser = require('cookie-parser'); // cookieParser
+const cookieParser = require('cookie-parser'); // cookieParser
 
 const cards = require('./routes/cards');
 const users = require('./routes/users');
+const login = require('./controllers/users');
+const createUser = require('./controllers/users');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -19,12 +20,17 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useFindAndModify: false,
 });
 
+app.use(cookieParser());
 app.use((req, res, next) => {
   req.user = {
     _id: '5eea2e55bd8f8a179b0004cd',
   };
   next();
 });
+
+app.post('/signin', login);
+app.post('/signup', createUser);
+
 app.use('/', cards);
 app.use('/', users);
 app.use('*', (req, res) => {

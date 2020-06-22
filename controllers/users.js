@@ -1,4 +1,6 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
 const User = require('../models/user');
 
 const getUsers = (req, res) => {
@@ -33,13 +35,24 @@ const createUser = (req, res) => {
         email: user.email,
       });
     })
-    .catch((err) => {
-      res.status(400).send(err);
-    });
+    .catch(() => res.status(400).send({ message: 'Запрос некорректно сформулирован' }));
+};
 
-  // User.create({ name, about, avatar })
-  // .then((user) => res.send({ data: user }))
-  // .catch(() => res.status(500).send({ message: 'Произошла ошибка при чтении данных' }));
+const login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredencials(email, password)
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        'en!gma',
+        { expiresIn: '7d' },
+      );
+      res
+        .cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true, sameSite: true })
+        .end();
+    })
+    .catch(() => res.status(401).send({ message: 'Произошла ошибка аутентификации' }));
 };
 
 const updateProfile = (req, res) => {
@@ -77,6 +90,7 @@ const updateAvatar = (req, res) => {
 module.exports = {
   getUsers,
   getUserById,
+  login,
   createUser,
   updateProfile,
   updateAvatar,
