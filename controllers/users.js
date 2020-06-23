@@ -21,11 +21,10 @@ const getUserById = (req, res) => {
       return res.send({ data: user });
     })
     .catch((error) => {
-      if (error.name === 'ValidationError') {
+      if (error.name === 'ValidationError' || error.name === 'CastError') {
         res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
-      } else {
-        res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
       }
+      return res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
     });
 };
 
@@ -42,12 +41,13 @@ const createUser = (req, res) => {
       res.status(201).send({ _id: user._id, email: user.email });
     })
     .catch((error) => {
-      if (error.name === 'ValidationError') {
+      if (error.name === 'ValidationError' || error.name === 'CastError') {
         res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
       }
       if (error.name === 'MongoError' && error.code === 11000) {
         res.status(409).send({ message: 'Указанный email уже используется' });
       }
+      return res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
     });
 };
 
@@ -82,11 +82,10 @@ const updateProfile = (req, res) => {
   )
     .then((user) => res.send({ data: user }))
     .catch((error) => {
-      if (error.name === 'ValidationError') {
+      if (error.name === 'ValidationError' || error.name === 'CastError') {
         res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
-      } else {
-        res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
       }
+      return res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
     });
 };
 
@@ -104,11 +103,10 @@ const updateAvatar = (req, res) => {
   )
     .then((user) => res.send({ data: user }))
     .catch((error) => {
-      if (error.name === 'ValidationError') {
+      if (error.name === 'ValidationError' || error.name === 'CastError') {
         res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
-      } else {
-        res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
       }
+      return res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
     });
 };
 
