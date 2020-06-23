@@ -33,9 +33,9 @@ const deleteCard = (req, res) => {
       if (card.owner.toString() !== req.user._id) {
         return res.status(403).send({ message: 'Это не ваша карточка' });
       }
-      card.remove();
-      return res.send({ data: card });
+      return card.remove();
     })
+    .then((card) => res.send({ data: card }))
     .catch((error) => {
       if (error.name === 'ValidationError' || error.name === 'CastError') {
         res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });

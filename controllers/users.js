@@ -41,7 +41,9 @@ const createUser = (req, res) => {
       res.status(201).send({ _id: user._id, email: user.email });
     })
     .catch((error) => {
-      if (error.name === 'ValidationError' || error.name === 'CastError') {
+      if (error.name === 'ValidationError'
+          || error.name === 'CastError'
+          || error.message === 'Illegal arguments: undefined, number') {
         res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
       }
       if (error.name === 'MongoError' && error.code === 11000) {
