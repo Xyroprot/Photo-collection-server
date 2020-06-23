@@ -32,7 +32,6 @@ app.use('*', (req, res, next) => {
 });
 app.use((err, req, res) => {
   const { statusCode = 500, message } = err; // если у ошибки нет кода, то по умолчанию код "500"
-  console.log(message);
   res
     .status(statusCode)
     .send({ message: statusCode === 500 ? 'Произошла ошибка при чтении данных' : message });
