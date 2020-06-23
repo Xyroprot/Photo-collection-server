@@ -17,8 +17,8 @@ const createCard = (req, res) => {
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send({ data: card }))
     .catch((error) => {
-      if (error.name === 'ValidationError') {
-        res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
+      if (error.name === 'ValidationError' || error.name === 'CastError') {
+        return res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
       }
       return res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
     });
@@ -38,7 +38,7 @@ const deleteCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((error) => {
       if (error.name === 'ValidationError' || error.name === 'CastError') {
-        res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
+        return res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
       }
       return res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
     });
@@ -62,7 +62,7 @@ const likeCard = (req, res) => {
     })
     .catch((error) => {
       if (error.name === 'ValidationError' || error.name === 'CastError') {
-        res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
+        return res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
       }
       return res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
     });
@@ -86,7 +86,7 @@ const dislikeCard = (req, res) => {
     })
     .catch((error) => {
       if (error.name === 'ValidationError' || error.name === 'CastError') {
-        res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
+        return res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
       }
       return res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
     });
