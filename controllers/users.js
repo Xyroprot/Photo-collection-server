@@ -50,7 +50,7 @@ const createUser = (req, res, next) => {
       if (error.name === 'MongoError' && error.code === 11000) {
         next(new ConflictingRequestError('Указанный email уже используется'));
       }
-      return next(error);
+      next(error);
     });
 };
 
