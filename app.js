@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+// eslint-disable-next-line no-unused-vars
+const dotenv = require('dotenv').config();
 const {
   celebrate, Joi, errors, Segments,
 } = require('celebrate');

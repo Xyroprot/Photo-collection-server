@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
+
+const { NODE_ENV, JWT_SECRET } = process.env;
 
 const User = require('../models/user');
 const {
@@ -8,8 +9,6 @@ const {
   BadRequesError,
   ConflictingRequestError,
 } = require('../errors/errors-bundle');
-
-const secretWord = crypto.randomBytes(32).toString('hex'); // секретный ключ для проверки токена
 
 const getUsers = (req, res, next) => {
   User.find({})
@@ -61,7 +60,7 @@ const login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        secretWord,
+        NODE_ENV === 'production' ? JWT_SECRET : 'secreWord',
         { expiresIn: '7d' },
       );
       res
@@ -114,7 +113,6 @@ const updateAvatar = (req, res, next) => {
 };
 
 module.exports = {
-  secretWord,
   getUsers,
   getUserById,
   login,
