@@ -16,17 +16,17 @@ const getUsers = (req, res, next) => {
     .catch(next);
 };
 
-const getUserById = (async (req, res, next) => {
-  await User.findById(req.params.userId)
+const getUserById = (req, res, next) => {
+  User.findById(req.params.userId)
     .orFail(new NotFoundError('Нет пользователя с таким id'))
     .then((user) => res.send({ data: user }))
     .catch((error) => {
       if (error.name === 'ValidationError' || error.name === 'CastError') {
-        next(new BadRequesError('Произошла ошибка при обработке запроса'));
+        return next(new BadRequesError('Произошла ошибка при обработке запроса'));
       }
-      next(error);
+      return next(error);
     });
-});
+};
 
 const createUser = (req, res, next) => {
   const {
@@ -44,12 +44,12 @@ const createUser = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'ValidationError' || error.name === 'CastError' || !password) {
-        next(new BadRequesError('Произошла ошибка при обработке запроса'));
+        return next(new BadRequesError('Произошла ошибка при обработке запроса'));
       }
       if (error.name === 'MongoError' && error.code === 11000) {
-        next(new ConflictingRequestError('Указанный email уже используется'));
+        return next(new ConflictingRequestError('Указанный email уже используется'));
       }
-      next(error);
+      return next(error);
     });
 };
 
@@ -85,9 +85,9 @@ const updateProfile = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((error) => {
       if (error.name === 'ValidationError' || error.name === 'CastError') {
-        next(new BadRequesError('Произошла ошибка при обработке запроса'));
+        return next(new BadRequesError('Произошла ошибка при обработке запроса'));
       }
-      next(error);
+      return next(error);
     });
 };
 
@@ -106,9 +106,9 @@ const updateAvatar = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((error) => {
       if (error.name === 'ValidationError' || error.name === 'CastError') {
-        next(new BadRequesError('Произошла ошибка при обработке запроса'));
+        return next(new BadRequesError('Произошла ошибка при обработке запроса'));
       }
-      next(error);
+      return next(error);
     });
 };
 

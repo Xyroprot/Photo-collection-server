@@ -2,10 +2,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const validator = require('validator');
 // eslint-disable-next-line no-unused-vars
 const dotenv = require('dotenv').config();
 const {
-  celebrate, Joi, errors, Segments,
+  celebrate, errors, Joi, Segments,
 } = require('celebrate');
 
 const cards = require('./routes/cards');
@@ -16,7 +17,7 @@ const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-const { NotFoundError } = require('./errors/errors-bundle');
+const { NotFoundError, BadRequesError } = require('./errors/errors-bundle');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -30,6 +31,13 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useCreateIndex: true,
   useFindAndModify: false,
 });
+
+const urlValidator = (value, helpers) => {
+  if (!validator.isURL(value)) {
+    return helpers.error(new BadRequesError('Произошла ошибка при обработке запроса'));
+  }
+  return value;
+};
 
 app.use(requestLogger);
 
@@ -48,7 +56,7 @@ app.post('/signup', celebrate({
   [Segments.BODY]: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     about: Joi.string().required().min(2).max(30),
-    avatar: Joi.string().required(),
+    avatar: Joi.string().custom(urlValidator).required(),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }),
@@ -62,9 +70,12 @@ app.use('*', (req, res, next) => {
 
 app.use(errorLogger);
 app.use(errors());
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err; // если у ошибки нет кода, то по умолчанию код "500"
-  res
+  if (res.headersSent) {
+    return next(err);
+  }
+  return res
     .status(statusCode)
     .send({ message: statusCode === 500 ? 'Произошла ошибка при чтении данных' : message });
 });

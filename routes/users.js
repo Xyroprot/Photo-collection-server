@@ -1,4 +1,5 @@
 const users = require('express').Router();
+const validator = require('validator');
 const {
   celebrate, Joi, errors, Segments,
 } = require('celebrate');
@@ -9,6 +10,14 @@ const {
   updateProfile,
   updateAvatar,
 } = require('../controllers/users');
+const { BadRequesError } = require('../errors/errors-bundle');
+
+const urlValidator = (value, helpers) => {
+  if (!validator.isURL(value)) {
+    return helpers.error(new BadRequesError('Произошла ошибка при обработке запроса'));
+  }
+  return value;
+};
 
 users.get('/users', celebrate({
   [Segments.HEADERS]: Joi.object().keys({
@@ -37,7 +46,7 @@ users.patch('/users/me', celebrate({
 
 users.patch('/users/me/avatar', celebrate({
   [Segments.BODY]: Joi.object().keys({
-    avatar: Joi.string().required(),
+    avatar: Joi.string().custom(urlValidator).required(),
   }),
   [Segments.HEADERS]: Joi.object().keys({
     cookie: Joi.string().required(),
