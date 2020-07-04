@@ -1,50 +1,49 @@
 const Card = require('../models/card');
+const {
+  NotFoundError,
+  BadRequesError,
+  ForbiddenError,
+} = require('../errors/errors-bundle');
 
-const getCards = (req, res) => {
+const getCards = (req, res, next) => {
   Card.find({})
-    .then((cards) => {
-      if (!cards) {
-        return res.status(404).send({ message: 'Ресурс не найден' });
-      }
-      return res.send({ data: cards });
-    })
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка при чтении данных' }));
+    .orFail(new NotFoundError('Карточки не найдены'))
+    .then((cards) => res.send({ data: cards }))
+    .catch(next);
 };
 
-const createCard = (req, res) => {
+const createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send({ data: card }))
     .catch((error) => {
       if (error.name === 'ValidationError' || error.name === 'CastError') {
-        return res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
+        return next(new BadRequesError('Произошла ошибка при обработке запроса'));
       }
-      return res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
+      return next(error);
     });
 };
 
-const deleteCard = (req, res) => {
+const deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
+    .orFail(new NotFoundError('Нет карточки с таким id'))
     .then((card) => {
-      if (!card) {
-        return res.status(404).send({ message: 'Нет карточки с таким id' });
-      }
       if (card.owner.toString() !== req.user._id) {
-        return res.status(403).send({ message: 'Это не ваша карточка' });
+        throw new ForbiddenError('Это не ваша карточка');
       }
       return card.remove();
     })
     .then((card) => res.send({ data: card }))
     .catch((error) => {
       if (error.name === 'ValidationError' || error.name === 'CastError') {
-        return res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
+        return next(new BadRequesError('Произошла ошибка при обработке запроса'));
       }
-      return res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
+      return next(error);
     });
 };
 
-const likeCard = (req, res) => {
+const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
@@ -54,21 +53,17 @@ const likeCard = (req, res) => {
       upsert: false,
     },
   )
-    .then((card) => {
-      if (!card) {
-        return res.status(404).send({ message: 'Нет карточки с таким id' });
-      }
-      return res.send({ data: card });
-    })
+    .orFail(new NotFoundError('Нет карточки с таким id'))
+    .then((card) => res.send({ data: card }))
     .catch((error) => {
       if (error.name === 'ValidationError' || error.name === 'CastError') {
-        return res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
+        return next(new BadRequesError('Произошла ошибка при обработке запроса'));
       }
-      return res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
+      return next(error);
     });
 };
 
-const dislikeCard = (req, res) => {
+const dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
@@ -78,17 +73,13 @@ const dislikeCard = (req, res) => {
       upsert: false,
     },
   )
-    .then((card) => {
-      if (!card) {
-        return res.status(404).send({ message: 'Нет карточки с таким id' });
-      }
-      return res.send({ data: card });
-    })
+    .orFail(new NotFoundError('Нет карточки с таким id'))
+    .then((card) => res.send({ data: card }))
     .catch((error) => {
       if (error.name === 'ValidationError' || error.name === 'CastError') {
-        return res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
+        return next(new BadRequesError('Произошла ошибка при обработке запроса'));
       }
-      return res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
+      return next(error);
     });
 };
 

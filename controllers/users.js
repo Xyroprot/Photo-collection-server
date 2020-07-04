@@ -1,34 +1,34 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
+
+const { NODE_ENV, JWT_SECRET } = process.env;
 
 const User = require('../models/user');
+const {
+  NotFoundError,
+  BadRequesError,
+  ConflictingRequestError,
+} = require('../errors/errors-bundle');
 
-const secretWord = crypto.randomBytes(32).toString('hex'); // секретный ключ для проверки токена
-
-const getUsers = (req, res) => {
+const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка при чтении данных' }));
+    .catch(next);
 };
 
-const getUserById = (req, res) => {
+const getUserById = (req, res, next) => {
   User.findById(req.params.userId)
-    .then((user) => {
-      if (!user) {
-        return res.status(404).send({ message: 'Нет пользователя с таким id' });
-      }
-      return res.send({ data: user });
-    })
+    .orFail(new NotFoundError('Нет пользователя с таким id'))
+    .then((user) => res.send({ data: user }))
     .catch((error) => {
       if (error.name === 'ValidationError' || error.name === 'CastError') {
-        return res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
+        return next(new BadRequesError('Произошла ошибка при обработке запроса'));
       }
-      return res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
+      return next(error);
     });
 };
 
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
@@ -37,40 +37,40 @@ const createUser = (req, res) => {
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    .then((user) => {
-      res.status(201).send({ _id: user._id, email: user.email });
+    .then(() => {
+      res.status(201).send({
+        name, about, avatar, email,
+      });
     })
     .catch((error) => {
-      if (error.name === 'ValidationError'
-          || error.name === 'CastError'
-          || error.message === 'Illegal arguments: undefined, number') {
-        return res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
+      if (error.name === 'ValidationError' || error.name === 'CastError' || !password) {
+        return next(new BadRequesError('Произошла ошибка при обработке запроса'));
       }
       if (error.name === 'MongoError' && error.code === 11000) {
-        return res.status(409).send({ message: 'Указанный email уже используется' });
+        return next(new ConflictingRequestError('Указанный email уже используется'));
       }
-      return res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
+      return next(error);
     });
 };
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUserByCredencials(email, password)
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        secretWord,
+        NODE_ENV === 'production' ? JWT_SECRET : 'secreWord',
         { expiresIn: '7d' },
       );
       res
         .cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true, sameSite: true })
         .end();
     })
-    .catch(() => res.status(401).send({ message: 'Произошла ошибка аутентификации' }));
+    .catch(next);
 };
 
-const updateProfile = (req, res) => {
+const updateProfile = (req, res, next) => {
   const { name, about } = req.body;
 
   User.findByIdAndUpdate(
@@ -85,13 +85,13 @@ const updateProfile = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((error) => {
       if (error.name === 'ValidationError' || error.name === 'CastError') {
-        return res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
+        return next(new BadRequesError('Произошла ошибка при обработке запроса'));
       }
-      return res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
+      return next(error);
     });
 };
 
-const updateAvatar = (req, res) => {
+const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(
@@ -106,14 +106,13 @@ const updateAvatar = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((error) => {
       if (error.name === 'ValidationError' || error.name === 'CastError') {
-        return res.status(400).send({ message: 'Произошла ошибка при обработке запроса' });
+        return next(new BadRequesError('Произошла ошибка при обработке запроса'));
       }
-      return res.status(500).send({ message: 'Произошла ошибка при чтении данных' });
+      return next(error);
     });
 };
 
 module.exports = {
-  secretWord,
   getUsers,
   getUserById,
   login,
